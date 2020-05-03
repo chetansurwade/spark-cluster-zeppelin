@@ -1,17 +1,18 @@
-FROM bde2020/spark-base:2.1.0-hadoop2.8-hive-java8
+FROM bde2020/spark-base:2.4.5-hadoop2.7
 
-ENV APACHE_SPARK_VERSION 2.1.0
-ENV APACHE_HADOOP_VERSION 2.8.0
-ENV ZEPPELIN_VERSION 0.7.2
+ENV APACHE_SPARK_VERSION 2.4.5
+ENV APACHE_HADOOP_VERSION 2.7.0
+ENV ZEPPELIN_VERSION 0.8.2
 
 RUN set -x \
     && curl -fSL "http://archive.apache.org/dist/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-netinst.tgz" -o /tmp/zeppelin.tgz \
-    && tar -xzvf /tmp/zeppelin.tgz -C /opt/ \
-    && mv /opt/zeppelin-* /opt/zeppelin \
+    && tar -xzvf /tmp/zeppelin.tgz -C / \
+    && mv /zeppelin-* /zeppelin \
     && rm /tmp/zeppelin.tgz
 
 ENV SPARK_SUBMIT_OPTIONS "--jars /opt/zeppelin/sansa-examples-spark-2016-12.jar"
+ENV SPARK_HOME /spark
 
-WORKDIR /opt/zeppelin
+WORKDIR /zeppelin
 
-CMD ["/opt/zeppelin/bin/zeppelin.sh"]
+CMD ["/zeppelin/bin/zeppelin.sh"]
