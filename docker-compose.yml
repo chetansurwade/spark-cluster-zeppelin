@@ -1,18 +1,25 @@
-version: "2.1"
+version: "3"
 
 services:
   spark-master:
     image: chetansurwade/spark-master:latest
     container_name: spark-master
+    expose: 
+      - "7077"
     ports:
       - "8080:8080"
       - "7077:7077"
       - "4040:4040"
+      - "1000:1000"
     networks:
       - spark-net
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
   spark-worker:
     image: chetansurwade/spark-worker:latest
     container_name: spark-worker
+    ports:
+      - "8082:8082"
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
     depends_on:
@@ -20,7 +27,6 @@ services:
     networks:
       - spark-net
   zeppelin:
-    # build: ./zeppelin
     image: chetansurwade/zeppelin:latest
     container_name: zeppelin
     ports:
@@ -32,6 +38,7 @@ services:
       - "SPARK_MASTER=spark://spark-master:7077"
       - "MASTER=spark://spark-master:7077"
       - "ZEPPELIN_ADDR=0.0.0.0"
+      - "ZEPPELIN_INTERPRETER_CONNECT_TIMEOUT=300000"
     depends_on:
       - spark-master
       - spark-worker
